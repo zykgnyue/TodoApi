@@ -9,6 +9,17 @@ using TodoApi.Mmodels;
 
 namespace TodoApi.Controllers
 {
+    //public class MyDemoController : Controller
+    //{
+    //    [Route("")]
+    //    [Route("Home")]
+    //    [Route("Home/Index")]
+    //    public IActionResult MyIndex()
+    //    {
+    //        return View("Index");
+    //    }
+    //}
+
     [Route("api/[controller]")]
     public class TodoController : Controller
     {
