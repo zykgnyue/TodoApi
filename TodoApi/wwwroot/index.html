@@ -111,6 +111,10 @@
 
         function find() {
             var id = $('#Id').val();
+            //check CheckBox checked 
+            //var isChecked = $('#IsItemComplete').prop('checked');
+            // returns "on" when checkbox is checked and "undefined", when checkbox is unchecked.
+            //var isChecked = $('#IsItemComplete:checked').val() ? true : false;
             $.getJSON(uri + '/' + id)
                 .done(function (data) {
                     $('#TodoItem').text(formatItem(data));
