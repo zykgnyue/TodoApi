@@ -49,26 +49,6 @@
 
         $(document).ready(getall());
 
-        function formatItem(item) {
-            //console.log(item);
-            return item.id + '. \"' + item.name + '\" : is ' + (item.isComplete ? ' ' : 'not ') + ' completed';
-        }
-
-        function find() {
-            var id = $('#Id').val();
-            $.getJSON(uri + '/' + id)
-                .done(function (data) {
-                    $('#TodoItem').text(formatItem(data));
-                    $('#Id1').val(id);
-                    $('#NameToDo').val(data.name);
-                    $('#IsItemComplete').val(data.isComplete?true:false);
-                    $('#PostPutItem').text(data.name);
-                })
-                .fail(function (jqXHR, textStatus, err) {
-                    $('#TodoItem').text('Error: ' + err);
-                });
-        }
-
         jQuery["postJSON"] = function (url, data, callback, errcallback) {
             // shift arguments if data argument was omitted
             if (jQuery.isFunction(data)) {
@@ -83,7 +63,8 @@
                 dataType: "json",
                 data: JSON.stringify(data),
                 success: callback,
-                error:errcallback });
+                error: errcallback
+            });
         };
 
         jQuery["putJSON"] = function (url, data, callback, errcallback) {
@@ -121,6 +102,28 @@
                 error: errcallback
             });
         };
+
+
+        function formatItem(item) {
+            //console.log(item);
+            return item.id + '. \"' + item.name + '\" : is ' + (item.isComplete ? ' ' : 'not ') + ' completed';
+        }
+
+        function find() {
+            var id = $('#Id').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#TodoItem').text(formatItem(data));
+                    $('#Id1').val(id);
+                    $('#NameToDo').val(data.name);
+                    $('#IsItemComplete').val(data.isComplete?true:false);
+                    $('#PostPutItem').text(data.name);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#TodoItem').text('Error: ' + err);
+                });
+        }
+
 
 
         function postItem() {
