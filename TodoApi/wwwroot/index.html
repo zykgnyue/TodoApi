@@ -15,24 +15,39 @@
         <input type="button" value="Search" onclick="find();" />
         <p id="TodoItem" />
     </div>
+    <div>
+        <h2>Post/PUT TodoItem</h2>
+        
+        <input type="text" id="Id1" size="5" placeholder="input id"/>
+        <input type="text" id="NameToDo" placeholder="input todo Item" size="50" />
+        <input type="checkbox" id="IsItemComplete" checked="checked" />
+        <input type="button" value="Post(ADD)"  onclick="postItem();" />
+        <input type="button" value="Put(Update)" onclick="putItem();" />
+        <input type="button" value="Delete" onclick="deleteItem();" />
+        <p id="PostPutItem" />
+    </div>
+
+
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <!--
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     -->
     <script>
         var uri = 'api/todo';
-
-        $(document).ready(function () {
+        var getall = function () {
             // Send an AJAX request
             $.getJSON(uri)
                 .done(function (data) {
                     // On success, 'data' contains a list of TodoItems.
+                    $('#TodoItems').text("");
                     $.each(data, function (key, item) {
                         // Add a list item for the product.
                         $('<li>', { text: formatItem(item) }).appendTo($('#TodoItems'));
                     });
                 });
-        });
+        };
+
+        $(document).ready(getall());
 
         function formatItem(item) {
             //console.log(item);
@@ -44,11 +59,146 @@
             $.getJSON(uri + '/' + id)
                 .done(function (data) {
                     $('#TodoItem').text(formatItem(data));
+                    $('#Id1').val(id);
+                    $('#NameToDo').val(data.name);
+                    $('#IsItemComplete').val(data.isComplete?true:false);
+                    $('#PostPutItem').text(data.name);
                 })
                 .fail(function (jqXHR, textStatus, err) {
                     $('#TodoItem').text('Error: ' + err);
                 });
         }
+
+        jQuery["postJSON"] = function (url, data, callback, errcallback) {
+            // shift arguments if data argument was omitted
+            if (jQuery.isFunction(data)) {
+                callback = data;
+                data = undefined;
+            }
+
+            return jQuery.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: callback,
+                error:errcallback });
+        };
+
+        jQuery["putJSON"] = function (url, data, callback, errcallback) {
+            // shift arguments if data argument was omitted
+            if (jQuery.isFunction(data)) {
+                callback = data;
+                data = undefined;
+            }
+
+            return jQuery.ajax({
+                url: url,
+                type: "PUT",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: callback,
+                error: errcallback
+            });
+        };
+
+        jQuery["deleteJSON"] = function (url, data, callback, errcallback) {
+            // shift arguments if data argument was omitted
+            if (jQuery.isFunction(data)) {
+                callback = data;
+                data = undefined;
+            }
+
+            return jQuery.ajax({
+                url: url,
+                type: "DELETE",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: callback,
+                error: errcallback
+            });
+        };
+
+
+        function postItem() {
+            var id = $('#Id1').val();
+            var formdata = {
+                name: $('#NameToDo').val(),
+                isComplete: $('#IsItemComplete').is(':checked')
+            };
+            console.log('checkbox' + $('#IsItemComplete').is(':checked'));
+
+            $.postJSON(
+                uri,
+                formdata,
+                function (data, textStatus, jqXHR) {
+                    getall();
+                    $('#Id1').val(id);
+                    $('#NameToDo').val(data.name);
+                    $('#IsItemComplete').val(data.isComplete ? true : false);
+                    $('#PostPutItem').text('AddOK: id='+data.id+",name="+data.name+",complete="+data.isComplete);
+                },
+                  function (jqXHR, textStatus, err) {
+                  $('#PostPutItem').text('Error: ' + err);
+                }
+            );
+ 
+        }
+
+        function putItem() {
+            var id = $('#Id1').val();
+            var formdata = {
+                id: Number( id),
+                name: $('#NameToDo').val(),
+                isComplete: $('#IsItemComplete').is(':checked')
+            };
+
+            $.putJSON(
+                uri + '/' + id,
+                formdata,
+                function (data, textStatus, jqXHR) {
+                    getall();
+                    $('#Id1').val(id);
+                    // nodata retrun
+                   // $('#NameToDo').val(data.name);
+                   // $('#IsItemComplete').val(data.isComplete ? true : false);
+                    $('#PostPutItem').text('PutOK: id=' + id );
+                },
+                function (jqXHR, textStatus, err) {
+                    $('#PostPutItem').text('Error: ' + err);
+                }
+            );
+
+        }
+
+        function deleteItem() {
+            var id = $('#Id1').val();
+            var formdata = {
+                id: Number(id),
+                name: $('#NameToDo').val(),
+                isComplete: $('#IsItemComplete').is(':checked')
+            };
+
+            $.deleteJSON(
+                uri + '/' + id,
+                formdata,
+                function (data, textStatus, jqXHR) {
+                    getall();
+                    $('#Id1').val(id);
+                    // nodata retrun
+                    // $('#NameToDo').val(data.name);
+                    // $('#IsItemComplete').val(data.isComplete ? true : false);
+                    $('#PostPutItem').text('DeleteOK: id=' + id);
+                },
+                function (jqXHR, textStatus, err) {
+                    $('#PostPutItem').text('Error: ' + err);
+                }
+            );
+        }
+
     </script>
 </body>
 </html>
