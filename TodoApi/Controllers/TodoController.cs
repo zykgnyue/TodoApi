@@ -35,12 +35,15 @@ namespace TodoApi.Controllers
         [HttpGet]
         public IEnumerable<TodoItem> GetAll()
         {
+            System.Console.WriteLine("HTTP Get all!");
             return _context.TodoItems.ToList();
         }
 
         [HttpGet("{Id}",Name="GetTodo")]
         public IActionResult GetById(long id)
         {
+            System.Console.WriteLine("HTTP GetBy Id!");
+
             var item = _context.TodoItems.FirstOrDefault(t => t.Id == id);
             if(item==null)
             {
@@ -52,7 +55,9 @@ namespace TodoApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] TodoItem item)
         {
-            if(item==null)
+            System.Console.WriteLine($"HTTP Post(add) Item {item.Name}!");
+
+            if (item==null)
             {
                 return BadRequest();
             }
@@ -70,8 +75,9 @@ namespace TodoApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(long id ,[FromBody] TodoItem item)
         {
-           
-            if(item ==null || item.Id!=id)
+            System.Console.WriteLine($"HTTP Put(Update) Item {id}!");
+
+            if (item ==null || item.Id!=id)
             {
                 return BadRequest();
             }
@@ -92,6 +98,8 @@ namespace TodoApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
+            System.Console.WriteLine($"HTTP Delete Item {id}!");
+
             var todo = _context.TodoItems.FirstOrDefault(t => t.Id == id);
             if(todo ==null)
             {
